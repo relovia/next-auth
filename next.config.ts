@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       { protocol: "http", hostname: "pbs.twimg.com" },
     ],
   },
+  output: "standalone",
 };
 
 export default nextConfig;
