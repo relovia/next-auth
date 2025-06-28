@@ -1,9 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { auth0 } from "@/lib/auth0";
-import { UserPlus, LogIn, LogOut } from "lucide-react";
+"use client";
 
-export default async function Home() {
-  const session = await auth0.getSession();
+import { useSession, signIn, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { UserPlus, LogOut } from "lucide-react";
+import { LoadingSpinner } from "@/components/loading-spinner";
+
+export default function Home() {
+  const { data: session, status } = useSession();
 
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f0f] to-[#1e1e1e]">
@@ -13,6 +16,14 @@ export default async function Home() {
     </main>
   );
 
+  if (status === "loading") {
+    return (
+      <Wrapper>
+        <LoadingSpinner />
+      </Wrapper>
+    );
+  }
+
   if (!session) {
     return (
       <Wrapper>
@@ -20,22 +31,16 @@ export default async function Home() {
           Hoş Geldin!
         </h1>
         <p className="text-neutral-400 text-center leading-relaxed">
-          Uygulamayı kullanmaya başlamak için hesabına giriş yap veya hızlıca
-          kayıt ol.
+          Giriş yapmak veya kayıt olmak için aşağıdaki butonları kullan.
         </p>
         <div className="flex flex-col gap-4 w-full">
-          <a href="/auth/login?screen_hint=signup">
-            <Button className="w-full text-lg cursor-pointer">
-              <UserPlus className="w-5 h-5 mr-2" />
-              Kayıt Ol
-            </Button>
-          </a>
-          <a href="/auth/login">
-            <Button variant="outline" className="w-full text-lg cursor-pointer">
-              <LogIn className="w-5 h-5 mr-2" />
-              Giriş Yap
-            </Button>
-          </a>
+          <Button
+            onClick={() => signIn("auth0", { prompt: "select_account" })}
+            className="w-full text-lg cursor-pointer"
+          >
+            <UserPlus className="w-5 h-5 mr-2" />
+            Giriş / Kayıt Ol
+          </Button>
         </div>
       </Wrapper>
     );
@@ -44,17 +49,19 @@ export default async function Home() {
   return (
     <Wrapper>
       <h1 className="text-4xl font-extrabold text-white drop-shadow-md">
-        Hoş geldin, {session.user.name}!
+        Hoş geldin, {session.user?.name}!
       </h1>
       <p className="text-neutral-400 text-center leading-relaxed">
         Başarıyla giriş yaptın. Dilersen çıkış yapabilirsin.
       </p>
-      <a href="/auth/logout" className="w-full">
-        <Button variant="destructive" className="w-full text-lg cursor-pointer">
-          <LogOut className="w-5 h-5 mr-2" />
-          Çıkış Yap
-        </Button>
-      </a>
+      <Button
+        onClick={() => signOut({ callbackUrl: "/auth/login" })}
+        variant="destructive"
+        className="w-full text-lg cursor-pointer"
+      >
+        <LogOut className="w-5 h-5 mr-2" />
+        Çıkış Yap
+      </Button>
     </Wrapper>
   );
 }
