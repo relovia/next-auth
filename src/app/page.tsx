@@ -19,7 +19,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f6f6f6]">
+    <div className="flex flex-col items-center justify-center bg-[#f6f6f6] h-full">
       <Card className="w-full max-w-4xl h-[600px] md:h-[520px] overflow-hidden border shadow-xl flex items-center justify-center py-0">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 h-full w-full p-0">
           <div className="flex flex-col h-full bg-white rounded-none md:rounded-l-3xl shadow-md px-4 py-6 text-left">
@@ -86,7 +86,7 @@ export default function Home() {
           </div>
           <div className="relative hidden md:block h-full w-full">
             <Image
-              src="/images/hali.jfif"
+              src="/images/pillows.jfif"
               alt="Giriş görseli"
               fill
               className="object-cover"

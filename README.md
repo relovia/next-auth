@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Auth0 + NextAuth + JWT Yetkilendirme Sistemi
 
-## Getting Started
+## Genel Bakış
 
-First, run the development server:
+Bu proje, **Next.js (App Router)**, OAuth sağlayıcısı olarak **Auth0**, oturum yönetimi için **NextAuth.js** ve güvenli, token tabanlı kimlik doğrulama için **JWT** kullanarak sağlam bir kimlik doğrulama ve yetkilendirme sistemi uygular.
+
+## Özellikler
+
+- **Auth0 ile OAuth Girişi**
+- **JWT tabanlı oturum yönetimi**
+- **Rol bazlı yetkilendirme** (admin, user)
+- **Sayfa koruması ve erişim kontrolü için Next.js Middleware**
+- **TypeScript** ile tip güvenliği
+- **TailwindCSS** ile modern arayüz (giriş & panel)
+- **Docker** ile konteyner desteği
+- **.env ile yapılandırma**
+
+## Teknolojiler & Araçlar
+
+- Next.js 15+ (App Router)
+- Auth0
+- NextAuth.js
+- JWT (JSON Web Token)
+- TypeScript
+- TailwindCSS
+- Docker
+- Git / GitHub
+
+## Klasör Yapısı
+
+```
+├── src/
+│   ├── app/
+│   │   ├── admin/           # Admin paneli (rol korumalı)
+│   │   ├── dashboard/       # Kullanıcı paneli (rol korumalı)
+│   │   ├── auth/login/      # Giriş sayfası
+│   │   ├── unauthorized/    # Yetkisiz erişim sayfası
+│   │   ├── api/auth/[...nextauth]/route.ts # NextAuth API route
+│   │   ├── layout.tsx       # Uygulama yerleşimi
+│   │   ├── middleware.ts    # Route koruma için middleware
+│   ├── components/          # Arayüz bileşenleri
+│   ├── lib/                 # Kimlik doğrulama mantığı, yardımcılar
+│   ├── types/               # TypeScript tipleri
+├── public/                  # Statik dosyalar
+├── Dockerfile               # Docker yapılandırması
+├── docker-compose.yml       # Docker Compose
+├── .env.example             # Örnek ortam değişkenleri
+```
+
+## Başlarken
+
+### 1. Repoyu Klonlayın
+
+```bash
+git clone https://github.com/kullanici-adiniz/next-auth.git
+cd next-auth
+```
+
+### 2. Kütüphaneleri Yükleyin
+
+```bash
+npm install
+# veya
+yarn install
+```
+
+### 3. Ortam Değişkenlerini Ayarlayın
+
+Kök dizinde bir `.env` dosyası oluşturun ve aşağıdaki ortam değişkenlerini doldurun:
+
+```
+AUTH0_CLIENT_ID=your-auth0-client-id
+AUTH0_CLIENT_SECRET=your-auth0-client-secret
+AUTH0_ISSUER=https://your-tenant.auth0.com
+NEXTAUTH_SECRET=your-random-secret
+NEXTAUTH_URL=http://localhost:3000
+```
+
+> **Not:** `NEXTAUTH_SECRET` değerini güvenli bir şekilde oluşturmak için aşağıdaki komutu kullanabilirsiniz:
+>
+> OpenSSL ile:
+>
+> ```bash
+> openssl rand -hex 32
+> ```
+>
+> veya Node.js ile:
+>
+> ```bash
+> node -e "console.log(crypto.randomBytes(32).toString('hex'))"
+> ```
+
+### 4. Geliştirme Sunucusunu Başlatın
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) adresinden uygulamayı görüntüleyebilirsiniz.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Docker Desteği
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Uygulamayı konteynerde çalıştırmak için:
 
-## Learn More
+```bash
+docker-compose up --build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Yetkilendirme & Middleware
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **/admin**: Sadece `role: admin` olan kullanıcılar erişebilir. Diğerleri `/unauthorized` sayfasına yönlendirilir.
+- **/dashboard**: Sadece kimliği doğrulanmış kullanıcılar erişebilir.
+- **/auth/login**: Herkese açık giriş sayfası.
+- **/unauthorized**: Yetkisiz erişimlerde gösterilir.
+- Middleware (`src/middleware.ts`), her istekte JWT ve kullanıcı rolünü kontrol eder.
