@@ -86,7 +86,7 @@ export default function Home() {
           </div>
           <div className="relative hidden md:block h-full w-full">
             <Image
-              src="/images/pillows.jfif"
+              src="/images/pillows.jpg"
               alt="Giriş görseli"
               fill
               className="object-cover"

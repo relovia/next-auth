@@ -28,7 +28,7 @@ export function LoginForm() {
 
           <div className="relative hidden md:block">
             <Image
-              src="/images/hali.jfif"
+              src="/images/hali.jpg"
               alt="Giriş görseli"
               fill
               className="object-cover"
